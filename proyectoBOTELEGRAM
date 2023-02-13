@@ -1,0 +1,150 @@
+const TelegramBot = require('node-telegram-bot-api'); 
+const token = 'Coloque aqui el token de su bot';
+const bot = new TelegramBot(token, {polling:true}); 
+var Gpio = require('onoff').Gpio;  
+ 
+var blue = new Gpio(26, 'out');  
+blue.writeSync(0);  
+var yellow = new Gpio(19, 'out');  
+yellow.writeSync(0); 
+var red = new Gpio(13, 'out');  
+red.writeSync(0); 
+var white = new Gpio(6, 'out');  
+white.writeSync(0); 
+ 
+bot.on('polling_error', function(error){ 
+    console.log(error); 
+}); 
+ 
+bot.onText(/^\/start/, function(msg){ 
+    var chatId = msg.chat.id; 
+    var nameUser = msg.from.first_name; 
+     
+    bot.sendMessage(chatId, "Bienvenidx " + nameUser); 
+}); 
+ 
+bot.onText(/^\/chatid/, (msg) => { 
+    const chatId = msg.chat.id; 
+    bot.sendMessage(chatId, "El id de este chat es: " + chatId);   
+}); 
+ 
+bot.onText(/^\/myid/, (msg) => { 
+    const chatId = msg.chat.id; 
+    const myId = msg.from.id; 
+    bot.sendMessage(chatId, "Tu id es: " + myId);   
+}); 
+ 
+bot.onText(/logo/, (msg) => { 
+    bot.sendPhoto(msg.chat.id,"https://ibb.co/MsbBp4b", {caption : "logo del bot "} ); 
+}); 
+ 
+bot.onText(/\/audio/, (msg) => { 
+    bot.sendAudio(msg.chat.id,"https://s33.aconvert.com/convert/p3r68-cdx67/m3flk-nyfn8.mp3",{caption : "Mario Bros :)"} );   
+}); 
+ 
+bot.onText(/casa/, (msg) => { 
+    bot.sendLocation(msg.chat.id,19.489129,-99.143831); 
+}); 
+ 
+bot.onText(/^\!captura/, function(msg) { 
+    console.log(msg); 
+    var userId = msg.from.id; 
+    var url = msg.text.substring(8).trim(); 
+    var image = "https://api.letsvalidate.com/v1/thumbs/?url=" + url + "&width=1280&height=720"; 
+  bot.sendMessage(msg.chat.id, "📷 Captura de la web: " + url,{parse_mode : "Markdown"}); 
+}); 
+ 
+bot.onText(/^\!qr/, function(msg) { 
+    console.log(msg); 
+    var userId = msg.from.id; 
+    var data = msg.text.substring(3).trim(); 
+    var imageqr = "https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=" + data; 
+  bot.sendMessage(msg.chat.id, "✏️Qr code de: " + data,{parse_mode : "Markdown"}); 
+  }); 
+ 
+  bot.on('message', (msg) => { 
+    var todos = "Enciende todos"; 
+    if (msg.text.indexOf(todos) === 0) { 
+        white.writeSync(1); 
+        yellow.writeSync(1); 
+        red.writeSync(1); 
+        blue.writeSync(1); 
+        bot.sendMessage(msg.chat.id, "Se encendieron todos los LEDs"); 
+    } 
+ 
+}); 
+ 
+bot.on('message', (msg) => { 
+    var todos = "Apaga todos"; 
+    if (msg.text.indexOf(todos) === 0) { 
+        white.writeSync(0); 
+        yellow.writeSync(0); 
+        red.writeSync(0); 
+        blue.writeSync(0); 
+        bot.sendMessage(msg.chat.id, "Se apagaron todos los LEDs"); 
+    } 
+}); 
+ 
+bot.on('message', (msg) => { 
+    var blanco = "Enciende LED blanco"; 
+    if (msg.text.indexOf(blanco) === 0) { 
+        white.writeSync(1); 
+        bot.sendMessage(msg.chat.id, "Se encendió el LED blanco"); 
+    } 
+}); 
+ 
+bot.on('message', (msg) => { 
+    var blanco = "Apaga LED blanco"; 
+    if (msg.text.indexOf(blanco) === 0) { 
+        white.writeSync(0); 
+        bot.sendMessage(msg.chat.id, "Se apagó el LED blanco"); 
+    } 
+}); 
+ 
+bot.on('message', (msg) => { 
+    var amarillo = "Enciende LED amarillo"; 
+    if (msg.text.indexOf(amarillo) === 0) { 
+        yellow.writeSync(1); 
+        bot.sendMessage(msg.chat.id, "Se encendió el LED amarillo"); 
+    } 
+});  
+ 
+bot.on('message', (msg) => { 
+    var amarillo = "Apaga LED amarillo"; 
+    if (msg.text.indexOf(amarillo) === 0) { 
+        yellow.writeSync(0); 
+        bot.sendMessage(msg.chat.id, "Se apagó el LED amarillo"); 
+    } 
+});  
+ 
+bot.on('message', (msg) => { 
+    var rojo = "Enciende LED rojo"; 
+    if (msg.text.indexOf(rojo) === 0) { 
+        red.writeSync(1); 
+        bot.sendMessage(msg.chat.id, "Se encendió el LED rojo"); 
+    } 
+}); 
+ 
+bot.on('message', (msg) => { 
+    var rojo = "Apaga LED rojo"; 
+    if (msg.text.indexOf(rojo) === 0) { 
+        red.writeSync(0); 
+        bot.sendMessage(msg.chat.id, "Se apagó el LED rojo"); 
+    } 
+}); 
+
+bot.on('message', (msg) => { 
+    var azul = "Enciende LED azul";
+    if (msg.text.indexOf(azul) === 0) { 
+        blue.writeSync(1); 
+        bot.sendMessage(msg.chat.id, "Se encendió el LED blue"); 
+    } 
+}); 
+ 
+bot.on('message', (msg) => { 
+    var azul = "Apaga LED azul"; 
+    if (msg.text.indexOf(azul) === 0) { 
+        blue.writeSync(0); 
+        bot.sendMessage(msg.chat.id, "Se apagó el LED azul"); 
+    } 
+});
